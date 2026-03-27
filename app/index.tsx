@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
+import { Redirect } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,17 +23,5 @@ export default function Index() {
     return null;
   }
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={{ fontSize: 20, fontFamily: "outfit" }}>
-        Welcome To EV Charging Station Mobile App
-      </Text>
-    </View>
-  );
+  return <Redirect href={"/login"} />;
 }
