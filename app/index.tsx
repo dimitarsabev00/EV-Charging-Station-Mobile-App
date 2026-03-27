@@ -1,11 +1,15 @@
+import { useUser } from "@clerk/clerk-expo";
 import { useFonts } from "expo-font";
-import { Redirect } from "expo-router";
+import { Redirect, useRootNavigationState } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { Text, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
+  const { user } = useUser();
+
   // Use `useFonts` only if you can't use the config plugin.
   const [loaded, error] = useFonts({
     outfit: require("../assets/fonts/Outfit-Regular.ttf"),
@@ -19,9 +23,21 @@ export default function Index() {
     }
   }, [loaded, error]);
 
+  useEffect(() => {
+    checkNavLoader();
+  }, []);
+
+  const checkNavLoader = () => {
+    if (!useRootNavigationState.key) return null;
+  };
+
   if (!loaded && !error) {
     return null;
   }
 
-  return <Redirect href={"/login"} />;
+  return (
+    <View>
+      {!user ? <Redirect href="/login" /> : <Text>You are signed in!!!</Text>}
+    </View>
+  );
 }

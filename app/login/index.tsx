@@ -1,10 +1,32 @@
+import { useWarmUpBrowser } from "@/hooks/warmUpBrowser";
+import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../../constants/Colors";
+import { useOAuth } from "@clerk/clerk-expo";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
-  const onPress = async () => console.log("BUtton CLiked!!");
+  useWarmUpBrowser();
 
+    const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  
+
+ const onPress=async()=>{
+    try {
+        const { createdSessionId, signIn, signUp, setActive } =
+          await startOAuthFlow();
+   
+        if (createdSessionId) {
+          setActive({ session: createdSessionId });
+        } else {
+          // Use signIn or signUp for next steps such as MFA
+        }
+      } catch (err) {
+        console.error("OAuth error", err);
+      }
+  }
   return (
     <View
       style={{
