@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { Redirect, useRootNavigationState } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,7 +37,11 @@ export default function Index() {
 
   return (
     <View>
-      {!user ? <Redirect href="/login" /> : <Text>You are signed in!!!</Text>}
+      {!user ? (
+        <Redirect href={"/login"} />
+      ) : (
+        <Redirect href={"/(tabs)/home"} />
+      )}
     </View>
   );
 }
