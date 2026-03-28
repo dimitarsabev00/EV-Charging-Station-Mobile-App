@@ -40,7 +40,13 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow EV Charging Station Mobile App to use your location."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
