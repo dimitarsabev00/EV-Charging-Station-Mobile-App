@@ -31,7 +31,7 @@ export default function SearchBar({ searchedLocation }) {
           searchedLocation(details?.geometry?.location);
         }}
         query={{
-          key: "AIzaSyB9ctiAb-J9CZil_ZlpAg3ZOXpxwudHlNw", // change this key!! ITS FAKEE
+          key: process.env.GOOGLE_API_KEY, // change this key!! ITS FAKEE
           language: "en",
         }}
       />
