@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, View } from "react-native";
+import AppMapView from "../../components/HomeTabScreen/AppMapView";
 
-const HomeTab = () => {
+export default function HomeScreen() {
   return (
-    <View>
-      <Text>HomeTab</Text>
+    <View style={styles.container}>
+      <AppMapView />
     </View>
   );
-};
+}
 
-export default HomeTab;
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
