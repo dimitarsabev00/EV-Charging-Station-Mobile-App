@@ -1,14 +1,15 @@
 import Header from "@/components/HomeTabScreen/Header";
+import PlaceListView from "@/components/HomeTabScreen/PlaceListView";
 import SearchBar from "@/components/HomeTabScreen/SearchBar";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import GlobalApi from "@/services/GlobalApi";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import AppMapView from "../../components/HomeTabScreen/AppMapView";
 
 export default function HomeScreen() {
   const { location, setLocation } = useContext(UserLocationContext);
-
+  const [placeList, setPlaceList] = useState([]);
   useEffect(() => {
     location && GetNearByPlace();
   }, [location]);
@@ -31,7 +32,7 @@ export default function HomeScreen() {
       },
     };
     GlobalApi.NewNearByPlace(data).then((res) => {
-      console.log(res.data?.places);
+      setPlaceList(res.data?.places);
     });
   };
 
@@ -49,6 +50,12 @@ export default function HomeScreen() {
         />
       </View>
       <AppMapView />
+
+      <View>
+        <View style={styles.placeListContainer}>
+          {placeList && <PlaceListView placeList={placeList} />}
+        </View>
+      </View>
     </View>
   );
 }
@@ -63,5 +70,11 @@ const styles = StyleSheet.create({
     padding: 60,
     width: "100%",
     paddingHorizontal: 20,
+  },
+  placeListContainer: {
+    position: "absolute",
+    bottom: 0,
+    zIndex: 10,
+    width: "100%",
   },
 });
