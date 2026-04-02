@@ -1,6 +1,7 @@
 import Header from "@/components/HomeTabScreen/Header";
 import PlaceListView from "@/components/HomeTabScreen/PlaceListView";
 import SearchBar from "@/components/HomeTabScreen/SearchBar";
+import { SelectMarkerContext } from "@/contexts/SelectMarkerContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import GlobalApi from "@/services/GlobalApi";
 import { useContext, useEffect, useState } from "react";
@@ -10,6 +11,7 @@ import AppMapView from "../../components/HomeTabScreen/AppMapView";
 export default function HomeScreen() {
   const { location, setLocation } = useContext(UserLocationContext);
   const [placeList, setPlaceList] = useState([]);
+  const [selectedMarker,setSelectedMarker] = useState([]);
   useEffect(() => {
     location && GetNearByPlace();
   }, [location]);
@@ -37,26 +39,28 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Header />
-        <SearchBar
-          searchedLocation={(location) =>
-            setLocation({
-              latitude: location.lat,
-              longitude: location.lng,
-            })
-          }
-        />
-      </View>
-      <AppMapView />
+    <SelectMarkerContext.Provider value={{selectedMarker,setSelectedMarker}}>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Header />
+          <SearchBar
+            searchedLocation={(location) =>
+              setLocation({
+                latitude: location.lat,
+                longitude: location.lng,
+              })
+            }
+          />
+        </View>
+        {placeList && <AppMapView placeList={placeList} />}
 
-      <View>
-        <View style={styles.placeListContainer}>
-          {placeList && <PlaceListView placeList={placeList} />}
+        <View>
+          <View style={styles.placeListContainer}>
+            {placeList && <PlaceListView placeList={placeList} />}
+          </View>
         </View>
       </View>
-    </View>
+    </SelectMarkerContext.Provider>
   );
 }
 
