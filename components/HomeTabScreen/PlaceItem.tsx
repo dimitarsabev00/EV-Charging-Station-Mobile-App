@@ -3,6 +3,8 @@ import React from "react";
 import {
   Dimensions,
   Image,
+  Linking,
+  Platform,
   Pressable,
   Text,
   ToastAndroid,
@@ -45,7 +47,30 @@ export default function PlaceItem({ place, isFav, markedFav }) {
     markedFav();
   };
 
-  
+  /**
+   * On Direction Click Navigate to Google Map/Apple Map
+   */
+  const onDirectionClick = () => {
+    const url = Platform.select({
+      ios:
+        "maps:" +
+        place.location.latitude +
+        "," +
+        place?.location?.longitude +
+        "?q=" +
+        place?.formattedAddress,
+      android:
+        "geo:" +
+        place.location.latitude +
+        "," +
+        place?.location?.longitude +
+        "?q=" +
+        place?.formattedAddress,
+    });
+
+    Linking.openURL(url);
+  };
+
   return (
     <View
       style={{
@@ -148,7 +173,7 @@ export default function PlaceItem({ place, isFav, markedFav }) {
               </Text>
             </View>
             <Pressable
-              onPress={() => {}}
+              onPress={() => onDirectionClick()}
               style={{
                 padding: 12,
                 backgroundColor: Colors.PRIMARY,
