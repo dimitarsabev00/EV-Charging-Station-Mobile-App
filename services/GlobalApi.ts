@@ -2,6 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "https://places.googleapis.com/v1/places:searchNearby";
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const FIREBASE_API = "Your Firebase API Key";
 
 const config = {
   headers: {
@@ -24,4 +25,5 @@ const NewNearByPlace = (data) => axios.post(BASE_URL, data, config);
 export default {
   NewNearByPlace,
   GOOGLE_API_KEY,
+  FIREBASE_API
 };

@@ -1,10 +1,23 @@
 import { SelectMarkerContext } from "@/contexts/SelectMarkerContext";
-import { useContext, useEffect, useRef } from "react";
+import { app } from "@/services/firebaseConfig";
+import { useUser } from "@clerk/clerk-expo";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Dimensions, FlatList, View } from "react-native";
 import PlaceItem from "./PlaceItem";
 
 export default function PlaceListView({ placeList }) {
   const flatListRef = useRef(null);
+  const { user } = useUser();
+
+  const [favList, setFavList] = useState([]);
+
   const { selectedMarker, setSelectedMarker } = useContext(SelectMarkerContext);
 
   useEffect(() => {
@@ -21,6 +34,34 @@ export default function PlaceListView({ placeList }) {
     index,
   });
 
+  // Get Data from Firestore
+  const db = getFirestore(app);
+  useEffect(() => {
+    user && getFav();
+  }, [user]);
+
+  const getFav = async () => {
+    setFavList([]);
+    const q = query(
+      collection(db, "ev-fav-place"),
+      where("email", "==", user?.primaryEmailAddress?.emailAddress),
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      setFavList((favList) => [...favList, doc.data()]);
+    });
+  };
+
+  const isFav = (place) => {
+    const result = favList.find((item) => item.place.id == place.id);
+    //result&&console.log(result)
+    console.log(result ? true : false);
+    return result ? true : false;
+  };
+
   return (
     <View>
       <FlatList
@@ -32,7 +73,11 @@ export default function PlaceListView({ placeList }) {
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => (
           <View key={index}>
-            <PlaceItem place={item} />
+            <PlaceItem
+              place={item}
+              isFav={isFav(item)}
+              markedFav={() => getFav()}
+            />
           </View>
         )}
       />

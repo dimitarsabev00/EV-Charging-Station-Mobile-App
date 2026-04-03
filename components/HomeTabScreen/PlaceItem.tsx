@@ -1,13 +1,51 @@
+import { deleteDoc, doc, getFirestore, setDoc } from "firebase/firestore";
 import React from "react";
-import { Dimensions, Image, Pressable, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  Text,
+  ToastAndroid,
+  View,
+} from "react-native";
 import Colors from "../../constants/Colors";
 import GlobalApi from "../../services/GlobalApi";
 
-import { FontAwesome } from "@expo/vector-icons";
+import { useUser } from "@clerk/clerk-expo";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-export default function PlaceItem({ place }) {
+export default function PlaceItem({ place, isFav, markedFav }) {
   const PLACE_PHOTO_BASE_URL = "https://places.googleapis.com/v1/";
 
+  const { user } = useUser();
+  const db = getFirestore(app);
+  /**
+   * Used to save Fav on Click of Heart Icon
+   * @param {*} place Place Object
+   */
+
+  const onSetFav = async (place) => {
+    await setDoc(doc(db, "ev-fav-place", place.id.toString()), {
+      place: place,
+      email: user?.primaryEmailAddress?.emailAddress,
+    });
+    markedFav();
+    ToastAndroid.show("Fav Added!", ToastAndroid.TOP);
+  };
+
+  /**
+   * Used to remove Fav from List
+   * @param {*} placeId
+   */
+
+  const onRemoveFav = async (placeId) => {
+    console.log(placeId);
+    await deleteDoc(doc(db, "ev-fav-place", placeId.toString()));
+    ToastAndroid.show("Fav Removed!", ToastAndroid.TOP);
+    markedFav();
+  };
+
+  
   return (
     <View
       style={{
@@ -19,6 +57,29 @@ export default function PlaceItem({ place }) {
       }}
     >
       <LinearGradient colors={["transparent", "#ffffffff", "#ffffff"]}>
+        {!isFav ? (
+          <Pressable
+            style={{
+              position: "absolute",
+              right: 0,
+              margin: 5,
+            }}
+            onPress={() => onSetFav(place)}
+          >
+            <Ionicons name="heart-outline" size={30} color="white" />
+          </Pressable>
+        ) : (
+          <Pressable
+            style={{
+              position: "absolute",
+              right: 0,
+              margin: 5,
+            }}
+            onPress={() => onRemoveFav(place.id)}
+          >
+            <Ionicons name="heart-sharp" size={30} color="red" />
+          </Pressable>
+        )}
         <Image
           source={
             place?.photos
